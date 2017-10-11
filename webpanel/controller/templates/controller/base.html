@@ -19,6 +19,7 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'controller/css/bootstrap-yeti.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'controller/css/base.css' %}" type="text/css">
 
     <title>Jasmine</title>
 
@@ -26,7 +27,7 @@
 
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                     aria-expanded="false" aria-controls="navbar">
@@ -34,27 +35,42 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Jasmine</a>
+            <a class="navbar-brand" href="{% url 'controller:start_view' %}">Jasmine</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Settings <span
-                            class="caret"></span></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Monitoring <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Profile</a></li>
+                        <li><a href="#">cośtam</a></li>
+                        <li><a href="#">cośtam</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Inventory <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Hosts</a></li>
+                        <li><a href="{% url 'controller:add_host' %}">Add host</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Settings <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Configuration</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'accounts:logout_view' %}">Logout</a></li>
                     </ul>
                 </li>
-
             </ul>
         </div>
     </div>
 </nav>
 
 <div class="container">
-    <div class="page-header"><h1>Siemka {{ request.user }}</h1></div>
+    <div class="row">
+        {% block index %}{% endblock %}
+        {% block add_host %}{% endblock %}
+    </div>
 </div>
 
 

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required  # authentication
 from django.contrib.auth import authenticate, login, logout  # authentication
 
 def login_view(request):
+    """ Get username, password and authenticate """
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -19,6 +20,7 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
+    """ Logout current user """
     logout(request)
     return redirect('controller:start_view')
 
