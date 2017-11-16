@@ -1,0 +1,53 @@
+{% extends 'controller/base.html' %}
+
+{% block edit_host %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>Edit host</h1>
+        </div>
+        <div class="row" style="padding: 0em 1em;">
+             {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form action="." method="post" role="form" class="form-horizontal">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <div>
+                            {{ edit_form.dns_name.label_tag }}
+                            {{ edit_form.dns_name }}
+                        </div>
+                        <div style="padding-top: 1em;">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    {{ edit_form.ip_address.label_tag }}
+                                    {{ edit_form.ip_address }}
+                                </div>
+                                <div class="col-sm-6">
+                                    {{ edit_form.synchronization_period.label_tag }}
+                                    {{ edit_form.synchronization_period }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        {{ edit_form.description.label_tag }}
+                        {{ edit_form.description }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 col-md-offset-10">
+                        <button type="submit" class="btn btn-success btn-block">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

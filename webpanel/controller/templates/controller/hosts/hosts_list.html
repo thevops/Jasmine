@@ -1,0 +1,55 @@
+{% extends 'controller/base.html' %}
+
+{% block hosts_list %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>Hosts list</h1>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <table class="table table-hover">
+            <tr>
+                <th>#</th>
+                <th>DNS</th>
+                <th>IP</th>
+                <th>Status</th>
+                <th>Last seen</th>
+                <th>Synch. period (min)</th>
+                <th>Description</th>
+            </tr>
+            {% for host in hosts %}
+            <tr>
+               <td>
+                    {{ forloop.counter }}
+               </td>
+                <td>
+                    <a href="{% url 'controller:edit_host' host.id %}">{{ host.dns_name }}</a>
+                </td>
+                <td>
+                    {{ host.ip_address }}
+                </td>
+                <td>
+                    {{ host.status }}
+                </td>
+                <td>
+                    {{ host.last_seen }}
+                </td>
+                <td>
+                    {{ host.synchronization_period }}
+                </td>
+                <td>
+                    {{ host.description }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -49,7 +49,7 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Inventory <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Hosts</a></li>
+                        <li><a href="{% url 'controller:hosts_list' %}">Hosts</a></li>
                         <li><a href="{% url 'controller:add_host' %}">Add host</a></li>
                     </ul>
                 </li>
@@ -70,6 +70,8 @@
     <div class="row">
         {% block index %}{% endblock %}
         {% block add_host %}{% endblock %}
+        {% block hosts_list %}{% endblock %}
+        {% block edit_host %}{% endblock %}
     </div>
 </div>
 
