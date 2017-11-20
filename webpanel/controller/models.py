@@ -7,7 +7,7 @@ class Statuses(models.Model):
     description = models.TextField()
 
     class Meta:
-        verbose_name_plural = "statusy"
+        verbose_name_plural = "statuses"
         verbose_name = "status"
 
 class Hosts(models.Model):
@@ -20,7 +20,7 @@ class Hosts(models.Model):
     synchronization_period = models.PositiveSmallIntegerField()
 
     class Meta:
-        verbose_name_plural = "hosty"
+        verbose_name_plural = "hosts"
         verbose_name = "host"
 
 class Groups(models.Model):
@@ -32,8 +32,8 @@ class Groups(models.Model):
         return str(self.name)
 
     class Meta:
-        verbose_name_plural = "grupy"
-        verbose_name = "grupa"
+        verbose_name_plural = "groups"
+        verbose_name = "group"
 
 class Modules(models.Model):
     """ Contains modules with all paremeters. 
@@ -45,8 +45,8 @@ class Modules(models.Model):
     configuration = models.TextField()  # JSON
 
     class Meta:
-        verbose_name_plural = "moduły"
-        verbose_name = "moduł"
+        verbose_name_plural = "modules"
+        verbose_name = "module"
 
 class GroupAssignment(models.Model):
     """ Joins two tables: Hosts and Groups. """
@@ -54,8 +54,8 @@ class GroupAssignment(models.Model):
     group_id = models.ForeignKey(Groups, on_delete=models.CASCADE, null=False)
 
     class Meta:
-        verbose_name_plural = "host <-> groupa"
-        verbose_name = "host <-> groupa"
+        verbose_name_plural = "hosts <-> groups"
+        verbose_name = "host <-> groups"
 
 class Tasks(models.Model):
     """ Queue of tasks for hosts. """
@@ -65,5 +65,5 @@ class Tasks(models.Model):
     worker = models.ForeignKey(Hosts, on_delete=models.CASCADE, null=False)
 
     class Meta:
-        verbose_name_plural = "zadania"
-        verbose_name = "zadanie"
+        verbose_name_plural = "tasks"
+        verbose_name = "task"

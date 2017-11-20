@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     -->
 
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     {% load static %}
     <link rel="stylesheet" href="{% static 'controller/css/bootstrap-yeti.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'controller/css/base.css' %}" type="text/css">
@@ -50,7 +53,7 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Inventory <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'controller:hosts_list' %}">Hosts</a></li>
-                        <li><a href="{% url 'controller:add_host' %}">Add host</a></li>
+                        <li><a href="{% url 'controller:groups_list' %}">Groups</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -69,14 +72,16 @@
 <div class="container">
     <div class="row">
         {% block index %}{% endblock %}
+
         {% block add_host %}{% endblock %}
         {% block hosts_list %}{% endblock %}
         {% block edit_host %}{% endblock %}
+
+        {% block groups_list %}{% endblock %}
+        {% block add_group %}{% endblock %}
+        {% block edit_group %}{% endblock %}
     </div>
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>

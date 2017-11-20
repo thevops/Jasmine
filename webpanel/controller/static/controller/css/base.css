@@ -1,3 +1,44 @@
 .main {
     padding: 10px;
 }
+
+/* for hide or show inputs filters in hosts and group lists */
+.filterable .filters input[disabled] {
+    background-color: transparent;
+    border: none;
+    cursor: auto;
+    box-shadow: none;
+    padding: 0;
+    height: auto;
+}
+
+/* for disabled filters */
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+    color: #000000;
+    font-size: 12px;
+}
+.filterable .filters input[disabled]::-moz-placeholder {
+    color: #000000;
+    font-size: 12px;
+}
+.filterable .filters input[disabled]:-ms-input-placeholder {
+    color: #000000;
+    font-size: 12px;
+}
+/* for enabled filters */
+.filterable .filters input::-webkit-input-placeholder {
+    color: #6e6e6e;
+    font-size: 12px;
+}
+.filterable .filters input::-moz-placeholder {
+    color: #6e6e6e;
+    font-size: 12px;
+}
+.filterable .filters input:-ms-input-placeholder {
+    color: #6e6e6e;
+    font-size: 12px;
+}
+/* form-control in filter input */
+.filterable .filters .form-control {
+    font-size: 12px !important;
+}
