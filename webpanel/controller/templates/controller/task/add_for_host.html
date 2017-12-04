@@ -1,0 +1,45 @@
+{% extends 'controller/base.html' %}
+
+{% block add_host %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>Add task for host</h1>
+        </div>
+        <div class="row" style="padding: 0em 1em;">
+             {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form action="." method="post" role="form" class="form-horizontal">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-md-6">
+                        {{ host_task_add_form.name.label_tag }}
+                        {{ host_task_add_form.name }}
+                        {{ host_task_add_form.description.label_tag }}
+                        {{ host_task_add_form.description }}
+                        {{ host_task_add_form.module.label_tag }}
+                        {{ host_task_add_form.module }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ host_task_add_form.workers.label_tag }}
+                        <div style="overflow: auto; height: 17em;">
+                            {{ host_task_add_form.workers }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-2 col-md-offset-10">
+                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

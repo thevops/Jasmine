@@ -19,4 +19,10 @@ urlpatterns = [
     url(r'^inventory/module/add/$', views.module_add_view, name='module_add'),
     url(r'^inventory/module/edit/(?P<pk>\d+)/$', views.module_edit_view, name='module_edit'),
     url(r'^inventory/module/delete/(?P<pk>\d+)/$', views.module_delete_view, name='module_delete'),
+    # --- Task --- #
+    url(r'^task/list/all/$', views.task_list_all_view, name='task_list_all'),
+    url(r'^task/list/completed/$', views.task_list_completed_view, name='task_list_completed'),
+    url(r'^task/list/all/inprogress/$', views.task_list_in_progress_view, name='task_list_in_progress'),
+    url(r'^task/add/host/$', views.task_host_add_view, name='task_host_add'),
+    url(r'^task/add/group/$', views.group_host_add_view, name='group_host_add'),
 ]

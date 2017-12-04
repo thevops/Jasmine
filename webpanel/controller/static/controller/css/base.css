@@ -2,7 +2,7 @@
     padding: 10px;
 }
 
-/* for hide or show inputs filters in hosts and group lists */
+/* for hide or show inputs filters in host and group lists */
 .filterable .filters input[disabled] {
     background-color: transparent;
     border: none;

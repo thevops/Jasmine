@@ -53,13 +53,13 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Tasks <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li class="dropdown-header">Add task</li>
-                        <li><a href="#">for host</a></li>
-                        <li><a href="#">for group</a></li>
+                        <li><a href="{% url 'controller:task_host_add' %}">for host</a></li>
+                        <li><a href="{% url 'controller:group_host_add' %}">for group</a></li>
                         <li class="divider"></li>
                         <li class="dropdown-header">Show tasks</li>
-                        <li><a href="#">All</a></li>
-                        <li><a href="#">Completed</a></li>
-                        <li><a href="#">In progress</a></li>
+                        <li><a href="{% url 'controller:task_list_all' %}">All</a></li>
+                        <li><a href="{% url 'controller:task_list_completed' %}">Completed</a></li>
+                        <li><a href="{% url 'controller:task_list_in_progress' %}">In progress</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

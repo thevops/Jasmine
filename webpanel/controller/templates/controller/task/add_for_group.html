@@ -1,0 +1,43 @@
+{% extends 'controller/base.html' %}
+
+{% block add_host %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>Add task for group</h1>
+        </div>
+        <div class="row" style="padding: 0em 1em;">
+             {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form action="." method="post" role="form" class="form-horizontal">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-md-6">
+                        {{ group_task_add_form.name.label_tag }}
+                        {{ group_task_add_form.name }}
+                        {{ group_task_add_form.description.label_tag }}
+                        {{ group_task_add_form.description }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ group_task_add_form.module.label_tag }}
+                        {{ group_task_add_form.module }}
+                        {{ group_task_add_form.groups.label_tag }}
+                        {{ group_task_add_form.groups }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-2 col-md-offset-10">
+                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

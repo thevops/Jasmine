@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.utils.safestring import mark_safe
 # thrid-part module
 # this app
-from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm
-from .models import Host, Group, Membership, Module
+from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm, HostTaskAddForm, GroupTaskAddForm
+from .models import Host, Group, Membership, Module, Task, HostStatus, TaskStatus
 
 @login_required
 def start_view(request):
@@ -17,12 +17,12 @@ def start_view(request):
 
 @login_required
 def host_list_view(request):
-    """ List all hosts in table """
+    """ List all host in table """
     all_hosts = Host.objects.all()
     data = {
         "hosts": all_hosts
     }
-    return render(request, 'controller/hosts/list.html', data)
+    return render(request, 'controller/host/list.html', data)
 
 @login_required
 def host_add_view(request):
@@ -32,7 +32,7 @@ def host_add_view(request):
         if host_add_form.is_valid():
             groups = host_add_form.cleaned_data['groups']
             host_obj = host_add_form.save()
-            # create Membership host -> many groups
+            # create Membership host -> many group
             Membership.bulk_save_host(host_obj=host_obj, groups_name=groups)
             messages.success(request, 'Host added to inventory.')
             return redirect('controller:host_add')
@@ -44,7 +44,7 @@ def host_add_view(request):
         data = {
             "add_host_form": host_add_form
         }
-        return render(request, 'controller/hosts/add.html', data)
+        return render(request, 'controller/host/add.html', data)
 
 @login_required
 def host_edit_view(request, pk=None):
@@ -52,7 +52,7 @@ def host_edit_view(request, pk=None):
     instance = get_object_or_404(Host, pk=pk)
     edit_form = HostEditForm(request.POST or None, instance=instance)
     if request.method == "POST" and edit_form.is_valid():
-        groups = edit_form.cleaned_data['groups']  # get selected groups
+        groups = edit_form.cleaned_data['groups']  # get selected group
         host_obj = edit_form.save()
         Membership.bulk_save_host(host_obj=host_obj, groups_name=groups)  # create membership
         messages.success(request, '%s updated' % edit_form.cleaned_data['dns_name'])
@@ -61,7 +61,7 @@ def host_edit_view(request, pk=None):
         data = {
             "edit_form": edit_form
         }
-        return render(request, 'controller/hosts/edit.html', data)
+        return render(request, 'controller/host/edit.html', data)
 
 @login_required
 def host_delete_view(request, pk=None):
@@ -74,12 +74,12 @@ def host_delete_view(request, pk=None):
 # ---------------------------------------------------  GROUPS  ------------------------ #
 @login_required
 def group_list_view(request):
-    """ List all groups in table """
+    """ List all group in table """
     all_groups = Group.objects.all()
     data = {
         "groups": all_groups
     }
-    return render(request, 'controller/groups/list.html', data)
+    return render(request, 'controller/group/list.html', data)
 
 @login_required
 def group_add_view(request):
@@ -89,7 +89,7 @@ def group_add_view(request):
         if group_add_form.is_valid():
             hosts = group_add_form.cleaned_data['hosts']
             group_obj = group_add_form.save()
-            # create Membership host -> many groups
+            # create Membership host -> many group
             Membership.bulk_save_group(hosts_name=hosts, group_obj=group_obj)
             messages.success(request, 'Group added to inventory.')
             return redirect('controller:group_add')
@@ -101,7 +101,7 @@ def group_add_view(request):
         data = {
             "add_group_form": group_add_form
         }
-        return render(request, 'controller/groups/add.html', data)
+        return render(request, 'controller/group/add.html', data)
 
 @login_required
 def group_edit_view(request, pk=None):
@@ -109,7 +109,7 @@ def group_edit_view(request, pk=None):
     instance = get_object_or_404(Group, pk=pk)
     edit_form = GroupEditForm(request.POST or None, instance=instance)
     if request.method == "POST" and edit_form.is_valid():
-        hosts = edit_form.cleaned_data['hosts']
+        hosts = edit_form.cleaned_data['host']
         group = edit_form.save()
         Membership.bulk_save_group(hosts_name=hosts, group_obj=group)
         messages.success(request, '%s updated' % edit_form.cleaned_data['name'])
@@ -118,7 +118,7 @@ def group_edit_view(request, pk=None):
         data = {
             "edit_form": edit_form
         }
-        return render(request, 'controller/groups/edit.html', data)
+        return render(request, 'controller/group/edit.html', data)
 
 @login_required
 def group_delete_view(request, pk=None):
@@ -180,3 +180,82 @@ def module_delete_view(request, pk=None):
     instance.delete()
     messages.success(request, 'Module %s has been removed' % instance.name)
     return redirect('controller:module_list')
+
+# ---------------------------------------------------  TASKS  ------------------------ #
+
+@login_required
+def task_list_all_view(request):
+    tasks = Task.objects.all()
+    data = {
+        "tasks": tasks,
+        "title": "All tasks list",
+    }
+    return render(request, 'controller/task/list.html', data)
+
+@login_required
+def task_list_completed_view(request):
+    #complete_status = TaskStatus.objects.get()
+    tasks = Task.objects.all()  # filter
+    data = {
+        "tasks": tasks,
+        "title": "Completed tasks list",
+    }
+    return render(request, 'controller/task/list.html', data)
+
+@login_required
+def task_list_in_progress_view(request):
+    # complete_status = TaskStatus.objects.get()
+    tasks = Task.objects.all()  # filter
+    data = {
+        "tasks": tasks,
+        "title": "In progress tasks list",
+    }
+    return render(request, 'controller/task/list.html', data)
+
+@login_required
+def task_host_add_view(request):
+    """ Get parameters from HostTaskAddForm and save it to database. """
+    if request.method == "POST":
+        host_task_add_form = HostTaskAddForm(request.POST)
+        if host_task_add_form.is_valid():
+            name = host_task_add_form.cleaned_data['name']
+            description = host_task_add_form.cleaned_data['description']
+            module = host_task_add_form.cleaned_data['module']
+            workers = host_task_add_form.cleaned_data['workers']
+            Task.bulk_save(name, description, module, workers)
+            messages.success(request, 'Task added to queue.')
+            return redirect('controller:task_host_add')
+        else:
+            messages.error(request, mark_safe('%s' % host_task_add_form.errors))  # TODO printowanie errorow
+            return redirect('controller:task_host_add')
+    else:
+        host_task_add_form = HostTaskAddForm()
+        data = {
+            "host_task_add_form": host_task_add_form
+        }
+        return render(request, 'controller/task/add_for_host.html', data)
+
+@login_required
+def group_host_add_view(request):
+    """ Get parameters from HostTaskAddForm and save it to database. """
+    if request.method == "POST":
+        group_task_add_form = GroupTaskAddForm(request.POST)
+        if group_task_add_form.is_valid():
+            name = group_task_add_form.cleaned_data['name']
+            description = group_task_add_form.cleaned_data['description']
+            module = group_task_add_form.cleaned_data['module']
+            group_name = group_task_add_form.cleaned_data['groups']
+            group = Group.objects.filter(name=group_name).first()  # take Group object
+            workers = group.members.all()  # find all members of group
+            Task.bulk_save(name, description, module, workers)  # for every member add task
+            messages.success(request, 'Task added to queue.')
+            return redirect('controller:group_host_add')
+        else:
+            messages.error(request, mark_safe('%s' % group_task_add_form.errors))  # TODO printowanie errorow
+            return redirect('controller:group_host_add')
+    else:
+        group_task_add_form = GroupTaskAddForm()
+        data = {
+            "group_task_add_form": group_task_add_form
+        }
+        return render(request, 'controller/task/add_for_group.html', data)

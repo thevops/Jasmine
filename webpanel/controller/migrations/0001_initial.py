@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
             ],
             options={
-                'verbose_name_plural': 'groups',
+                'verbose_name_plural': 'group',
                 'verbose_name': 'group',
             },
         ),
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('synchronization_period', models.PositiveSmallIntegerField()),
             ],
             options={
-                'verbose_name_plural': 'hosts',
+                'verbose_name_plural': 'host',
                 'verbose_name': 'host',
             },
         ),
@@ -49,8 +49,8 @@ class Migration(migrations.Migration):
                 ('host', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='controller.Host')),
             ],
             options={
-                'verbose_name_plural': 'hosts <-> groups',
-                'verbose_name': 'host <-> groups',
+                'verbose_name_plural': 'host <-> group',
+                'verbose_name': 'host <-> group',
             },
         ),
         migrations.CreateModel(

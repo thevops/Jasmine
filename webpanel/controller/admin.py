@@ -1,27 +1,32 @@
 from django.contrib import admin
-from .models import Statuse, Host, Group, Module, Task, Membership
+from .models import HostStatus, Host, Group, Module, Task, Membership, TaskStatus
 
 admin.site.site_header = 'Panel administracyjny - Jasmine'
 admin.site.site_title = 'Jasmine'
 admin.site.index_title = 'Panel'
 
-@admin.register(Statuse)
-class StatusesAdmin(admin.ModelAdmin):
-    model = Statuse
+@admin.register(HostStatus)
+class HostStatusAdmin(admin.ModelAdmin):
+    model = HostStatus
+    list_display = ('id','name','description')
+
+@admin.register(TaskStatus)
+class TaskStatusAdmin(admin.ModelAdmin):
+    model = TaskStatus
     list_display = ('id','name','description')
 
 @admin.register(Host)
-class HostsAdmin(admin.ModelAdmin):
+class HostAdmin(admin.ModelAdmin):
     model = Host
     list_display = ('id', 'dns_name', 'ip_address', 'description', 'status', 'last_seen', 'synchronization_period')
 
 @admin.register(Group)
-class GroupsAdmin(admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
     model = Group
     list_display = ('id', 'name', 'description')
 
 @admin.register(Module)
-class ModulesAdmin(admin.ModelAdmin):
+class ModuleAdmin(admin.ModelAdmin):
     model = Module
     list_display = ('id', 'name', 'description', 'configuration')
 
@@ -31,7 +36,7 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ('id', 'host', 'group')
 
 @admin.register(Task)
-class TasksAdmin(admin.ModelAdmin):
+class TaskAdmin(admin.ModelAdmin):
     model = Task
     list_display = ('id', 'name', 'description', 'module', 'worker')
     list_display_links = ('module', 'worker')
