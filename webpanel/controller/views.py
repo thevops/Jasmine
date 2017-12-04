@@ -4,116 +4,179 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.safestring import mark_safe
-# thrid-part modules
+# thrid-part module
 # this app
-from .forms import HostsAddForm, GroupsAddForm
-from .models import Hosts, Groups
+from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm
+from .models import Host, Group, Membership, Module
 
 @login_required
 def start_view(request):
     return render(request, 'controller/index.html',)
 
-# ------------------ HOSTS ------------------  #
+# --------------------------------------------------- HOSTS ------------------  #
 
 @login_required
-def hosts_list_view(request):
+def host_list_view(request):
     """ List all hosts in table """
-    all_hosts = Hosts.objects.all()
+    all_hosts = Host.objects.all()
     data = {
         "hosts": all_hosts
     }
-    return render(request, 'controller/hosts/hosts_list.html', data)
+    return render(request, 'controller/hosts/list.html', data)
 
 @login_required
-def add_host_view(request):
+def host_add_view(request):
     """ Get parameters from HostsAddForm and save it to database. """
     if request.method == "POST":
-        add_host_form = HostsAddForm(request.POST)
-        if add_host_form.is_valid():
-            add_host_form.save()
+        host_add_form = HostAddForm(request.POST)
+        if host_add_form.is_valid():
+            groups = host_add_form.cleaned_data['groups']
+            host_obj = host_add_form.save()
+            # create Membership host -> many groups
+            Membership.bulk_save_host(host_obj=host_obj, groups_name=groups)
             messages.success(request, 'Host added to inventory.')
-            return redirect('controller:add_host')
+            return redirect('controller:host_add')
         else:
-            messages.error(request, mark_safe('%s' % add_host_form.errors))  # TODO printowanie errorow
-            return redirect('controller:add_host')
+            messages.error(request, mark_safe('%s' % host_add_form.errors))  # TODO printowanie errorow
+            return redirect('controller:host_add')
     else:
-        add_host_form = HostsAddForm()
+        host_add_form = HostAddForm()
         data = {
-            "add_host_form": add_host_form
+            "add_host_form": host_add_form
         }
-        return render(request, 'controller/hosts/add_host.html', data)
+        return render(request, 'controller/hosts/add.html', data)
 
 @login_required
-def edit_host_view(request, id=None):
+def host_edit_view(request, pk=None):
     """ Get host from database to form and allow to update data """
-    instance = get_object_or_404(Hosts, pk=id)
-    edit_form = HostsAddForm(request.POST or None, instance=instance)
+    instance = get_object_or_404(Host, pk=pk)
+    edit_form = HostEditForm(request.POST or None, instance=instance)
     if request.method == "POST" and edit_form.is_valid():
-        edit_form.save()
+        groups = edit_form.cleaned_data['groups']  # get selected groups
+        host_obj = edit_form.save()
+        Membership.bulk_save_host(host_obj=host_obj, groups_name=groups)  # create membership
         messages.success(request, '%s updated' % edit_form.cleaned_data['dns_name'])
-        return redirect('controller:hosts_list')
+        return redirect('controller:host_list')
     else:
         data = {
             "edit_form": edit_form
         }
-        return render(request, 'controller/hosts/edit_host.html', data)
+        return render(request, 'controller/hosts/edit.html', data)
 
 @login_required
-def delete_host_view(request, id=None):
+def host_delete_view(request, pk=None):
     """ Get host ID and delete it """
-    instance = get_object_or_404(Hosts, pk=id)
+    instance = get_object_or_404(Host, pk=pk)
     instance.delete()
     messages.success(request, 'Host %s has been removed' % instance.dns_name)
-    return redirect('controller:hosts_list')
+    return redirect('controller:host_list')
 
-# --------------------  Groups  ------------------------ #
+# ---------------------------------------------------  GROUPS  ------------------------ #
 @login_required
-def groups_list_view(request):
+def group_list_view(request):
     """ List all groups in table """
-    all_groups = Groups.objects.all()
+    all_groups = Group.objects.all()
     data = {
         "groups": all_groups
     }
-    return render(request, 'controller/groups/groups_list.html', data)
+    return render(request, 'controller/groups/list.html', data)
 
 @login_required
-def add_group_view(request):
+def group_add_view(request):
     """ Get parameters from GroupAddForm and save it to database. """
     if request.method == "POST":
-        add_group_form = GroupsAddForm(request.POST)
-        if add_group_form.is_valid():
-            add_group_form.save()
+        group_add_form = GroupAddForm(request.POST)
+        if group_add_form.is_valid():
+            hosts = group_add_form.cleaned_data['hosts']
+            group_obj = group_add_form.save()
+            # create Membership host -> many groups
+            Membership.bulk_save_group(hosts_name=hosts, group_obj=group_obj)
             messages.success(request, 'Group added to inventory.')
-            return redirect('controller:add_group')
+            return redirect('controller:group_add')
         else:
-            messages.error(request, mark_safe('%s' % add_group_form.errors))  # TODO printowanie errorow
-            return redirect('controller:add_group')
+            messages.error(request, mark_safe('%s' % group_add_form.errors))  # TODO printowanie errorow
+            return redirect('controller:group_add')
     else:
-        add_group_form = GroupsAddForm()
+        group_add_form = GroupAddForm()
         data = {
-            "add_group_form": add_group_form
+            "add_group_form": group_add_form
         }
-        return render(request, 'controller/groups/add_group.html', data)
+        return render(request, 'controller/groups/add.html', data)
 
 @login_required
-def edit_group_view(request, id=None):
+def group_edit_view(request, pk=None):
     """ Get group from database to form and allow to update data """
-    instance = get_object_or_404(Groups, pk=id)
-    edit_form = GroupsAddForm(request.POST or None, instance=instance)
+    instance = get_object_or_404(Group, pk=pk)
+    edit_form = GroupEditForm(request.POST or None, instance=instance)
     if request.method == "POST" and edit_form.is_valid():
-        edit_form.save()
+        hosts = edit_form.cleaned_data['hosts']
+        group = edit_form.save()
+        Membership.bulk_save_group(hosts_name=hosts, group_obj=group)
         messages.success(request, '%s updated' % edit_form.cleaned_data['name'])
-        return redirect('controller:groups_list')
+        return redirect('controller:group_list')
     else:
         data = {
             "edit_form": edit_form
         }
-        return render(request, 'controller/groups/edit_group.html', data)
+        return render(request, 'controller/groups/edit.html', data)
 
 @login_required
-def delete_group_view(request, id=None):
+def group_delete_view(request, pk=None):
     """ Get group ID and delete it """
-    instance = get_object_or_404(Groups, pk=id)
+    instance = get_object_or_404(Group, pk=pk)
     instance.delete()
     messages.success(request, 'Group %s has been removed' % instance.name)
-    return redirect('controller:groups_list')
+    return redirect('controller:group_list')
+
+
+# ---------------------------------------------------  MODULES  ------------------------ #
+
+@login_required
+def module_list_view(request):
+    all_modules = Module.objects.all()
+    data = {
+        "modules": all_modules,
+    }
+    return render(request, 'controller/module/list.html', data)
+
+@login_required
+def module_add_view(request):
+    """ Get parameters from ModuleAddForm and save it to database. """
+    if request.method == "POST":
+        module_add_form = ModuleAddForm(request.POST)
+        if module_add_form.is_valid():
+            module_add_form.save()
+            messages.success(request, 'Module added to inventory.')
+            return redirect('controller:module_add')
+        else:
+            messages.error(request, mark_safe('%s' % module_add_form.errors))  # TODO printowanie errorow
+            return redirect('controller:module_add')
+    else:
+        module_add_form = ModuleAddForm()
+        data = {
+            "add_module_form": module_add_form
+        }
+        return render(request, 'controller/module/add.html', data)
+
+@login_required
+def module_edit_view(request, pk=None):
+    """ Get module from database to form and allow to update data """
+    instance = get_object_or_404(Module, pk=pk)
+    edit_form = ModuleAddForm(request.POST or None, instance=instance)
+    if request.method == "POST" and edit_form.is_valid():
+        edit_form.save()
+        messages.success(request, '%s updated' % edit_form.cleaned_data['name'])
+        return redirect('controller:module_list')
+    else:
+        data = {
+            "edit_form": edit_form
+        }
+        return render(request, 'controller/module/edit.html', data)
+
+@login_required
+def module_delete_view(request, pk=None):
+    """ Get module ID and delete it """
+    instance = get_object_or_404(Module, pk=pk)
+    instance.delete()
+    messages.success(request, 'Module %s has been removed' % instance.name)
+    return redirect('controller:module_list')

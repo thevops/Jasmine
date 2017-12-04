@@ -1,9 +1,9 @@
 {% extends 'controller/base.html' %}
 
-{% block edit_host %}
+{% block edit_group %}
     <div class="col-md-12">
         <div class="page-header main">
-            <h1>Edit host</h1>
+            <h1>Edit module</h1>
         </div>
         <div class="row" style="padding: 0em 1em;">
              {% if messages %}
@@ -19,32 +19,26 @@
             <form action="." method="post" role="form" class="form-horizontal">
                 {% csrf_token %}
                 <div class="form-group">
-                    <div class="col-sm-6">
-                        <div>
-                            {{ edit_form.dns_name.label_tag }}
-                            {{ edit_form.dns_name }}
-                        </div>
-                        <div style="padding-top: 1em;">
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    {{ edit_form.ip_address.label_tag }}
-                                    {{ edit_form.ip_address }}
-                                </div>
-                                <div class="col-sm-6">
-                                    {{ edit_form.synchronization_period.label_tag }}
-                                    {{ edit_form.synchronization_period }}
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-12">
+                        {{ edit_form.name.label_tag }}
+                        {{ edit_form.name }}
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
                         {{ edit_form.description.label_tag }}
                         {{ edit_form.description }}
                     </div>
                 </div>
                 <div class="form-group">
+                    <div class="col-md-12">
+                        {{ edit_form.configuration.label_tag }}
+                        {{ edit_form.configuration }}
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="col-md-2">
-                        <a href="{% url 'controller:hosts_list' %}" class="btn btn-warning btn-block">Back</a>
+                        <a href="{% url 'controller:module_list' %}" class="btn btn-warning btn-block">Back</a>
                     </div>
                     <div class="col-md-2 col-md-offset-8">
                         <button type="submit" class="btn btn-success btn-block">Update</button>

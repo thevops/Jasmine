@@ -1,0 +1,83 @@
+{% extends 'controller/base.html' %}
+
+{% block hosts_list %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>Hosts list</h1>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    <div class="filterable">
+        <div class="row form-group">
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-filter btn-block"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+            </div>
+            <div class="col-md-2 col-md-offset-8">
+                <a href="{% url 'controller:host_add' %}" class="btn btn-success btn-filter btn-block"><span class="glyphicon glyphicon-plus"></span> Add host</a>
+            </div>
+        </div>
+        <table class="table table-hover table-bordered" style="margin: 1em 0em;">
+            <thead>
+                <tr class="filters">
+                    <th style="width: 5%;vertical-align: middle;"><input type="text" class="form-control" placeholder="#" disabled></th>
+                    <th style="vertical-align: middle;"><input type="text" class="form-control" placeholder="DNS" disabled></th>
+                    <th style="width: 8%; vertical-align: middle;"><input type="text" class="form-control" placeholder="IP" disabled></th>
+                    <th style="vertical-align: middle;"><input type="text" class="form-control" placeholder="Status" disabled></th>
+                    <th style="vertical-align: middle;"><input type="text" class="form-control" placeholder="Last seen" disabled></th>
+                    <th style="width: 8%; vertical-align: middle;"><span title="Sychronization period in minutes"><input type="text" class="form-control" placeholder="Sync" disabled></span></th>
+                    <th style="width: 30%; vertical-align: middle;"><input type="text" class="form-control" placeholder="Description" disabled></th>
+                    <th style="width: 10%; vertical-align: middle; text-align:center;">Action</th>
+                </tr>
+            </thead>
+            {% for host in hosts %}
+            <tbody>
+                <tr>
+                   <td style="vertical-align: middle;">
+                        {{ forloop.counter }}
+                   </td>
+                    <td style="vertical-align: middle;">
+                        <a href="#">{{ host.dns_name }}</a>
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {{ host.ip_address }}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {{ host.status }}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {{ host.last_seen }}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {{ host.synchronization_period }}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {{ host.description }}
+                    </td>
+                    <td style="vertical-align: middle; text-align:center;">
+                        <a href="{% url 'controller:host_edit' host.id %}">
+                            <span style="font-size: 1.5em;" title="Edit host" class="glyphicon glyphicon-edit"
+                                  aria-hidden="true"></span>
+                        </a>
+                        <a href="{% url 'controller:host_delete' host.id %}"
+                           onclick="return confirm('Are you sure you want to remove {{ host.dns_name }} ?')">
+                            <span style="font-size: 1.5em;" title="Delete host" class="glyphicon glyphicon-remove"
+                                  aria-hidden="true"></span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'controller/js/table_search.js' %}"></script>
+{% endblock %}

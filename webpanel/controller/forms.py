@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import Statuses, Hosts, Groups, Modules, GroupAssignment, Tasks
+from .models import Statuse, Host, Group, Module, Task, Membership
+from django.db.models import Value, BooleanField
 
-class HostsAddForm(forms.ModelForm):
+from json import loads
+
+class HostAddForm(forms.ModelForm):
     """ Add host """
     dns_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'DNS'}),
                                 required=True, max_length=64, label="DNS")
@@ -12,28 +15,108 @@ class HostsAddForm(forms.ModelForm):
                                   required=True, label="Description")
     synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True, label="Synchronization period (min)",
                                                 widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'1-60'}))
+    groups = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=Group.objects.all(), label="Groups", required=False)
 
     class Meta:
-        model = Hosts
-        fields = ('dns_name', 'ip_address', 'description', 'synchronization_period')
+        model = Host
+        fields = ('dns_name', 'ip_address', 'description', 'synchronization_period', 'groups')
 
-class GroupsAddForm(forms.ModelForm):
+
+class HostEditForm(forms.ModelForm):
+    """ Edit host """
+    dns_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'DNS'}),
+                                required=True, max_length=64, label="DNS")
+    ip_address = forms.GenericIPAddressField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'IP Address'}),
+                                             protocol='IPv4', required=True, label="IP Address")
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Description','rows':'5'}),
+                                  required=True, label="Description")
+    synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True, label="Synchronization period (min)",
+                                                widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'1-60'}))
+    groups = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=Group.objects.none(), label="Groups", required=False)
+
+    class Meta:
+        model = Host
+        fields = ('dns_name', 'ip_address', 'description', 'synchronization_period', 'groups')
+
+    def __init__(self, *args, **kwargs):
+        """ Filtering Groups selected by Host or not """
+        super(HostEditForm, self).__init__(*args, **kwargs)
+        instance = kwargs.pop('instance')
+        if instance:
+            selected = instance.group_set.all()
+            selected_id = [x.id for x in selected]
+            not_selected = Group.objects.exclude(pk__in=selected_id)
+            qs = selected | not_selected  # for concatenate two querysets
+            self.fields['groups'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=qs, label="Groups", required=False)
+            self.initial['groups'] = selected_id  # set which Groups will be 'checked'
+
+
+class GroupAddForm(forms.ModelForm):
     """ Add group """
     name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}),
                            required=True, max_length=64, label="Name of group")
     description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Description','rows':'5'}),
                                   required=True, label="Description")
 
-    class Meta:
-        model = Groups
-        fields = ('name', 'description')
-
-class ModulesAddForm(forms.ModelForm):
-    """ Add modules """
-    name = forms.CharField(max_length=64, required=True, label="nazwa modułu")
-    descrpiton = forms.CharField(widget=forms.Textarea, required=True, label="opis")
-    configration = forms.CharField(widget=forms.Textarea, required=True, label="konfiguracja")
+    hosts = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=Host.objects.all(), label="Hosts", required=False)
 
     class Meta:
-        model = Modules
+        model = Group
+        fields = ('name', 'description', 'hosts')
+
+
+class GroupEditForm(forms.ModelForm):
+    """ Add group """
+    name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}),
+                           required=True, max_length=64, label="Name of group")
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Description','rows':'5'}),
+                                  required=True, label="Description")
+
+    hosts = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=Host.objects.all(), label="Hosts", required=False)
+
+    class Meta:
+        model = Group
+        fields = ('name', 'description', 'hosts')
+
+    def __init__(self, *args, **kwargs):
+        """ Filtering Hosts in Group or not """
+        super(GroupEditForm, self).__init__(*args, **kwargs)
+        instance = kwargs.pop('instance')
+        if instance:
+            selected = instance.members.all()
+            selected_id = [x.id for x in selected]
+            not_selected = Host.objects.exclude(pk__in=selected_id)
+            qs = selected | not_selected  # for concatenate two querysets
+            self.fields['hosts'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+                                            queryset=qs, label="Hosts", required=False)
+            self.initial['hosts'] = selected_id  # set which Groups will be 'checked'
+
+
+class ModuleAddForm(forms.ModelForm):
+    """ Add module """
+    name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Name'}),
+                           required=True, max_length=64, label="Name")
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Description', 'rows':'5'}),
+                                  required=True, label="Description")
+    configuration = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Configuration', 'rows':'5'}),
+                                  required=True, label="Configuration")
+
+    def clean_configuration(self):
+        """ Check if configuration field is JSON formatted """
+        configuration = self.cleaned_data['configuration']
+        print("CLEAN")
+        try:
+            loads(configuration)
+        except ValueError:
+            raise forms.ValidationError("Configuration muste have JSON format !")
+
+        return configuration
+
+    class Meta:
+        model = Module
         fields = ('name', 'description', 'configuration')
