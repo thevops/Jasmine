@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^task/(?P<task_id>[0-9]+)/$', views.get_task, name='get_task'),
     url(r'^task/(?P<task_id>[0-9]+)/result/$', views.set_task_result, name='set_task_result'),
     url(r'^module/(?P<module_id>[0-9]+)/$', views.get_module, name='get_module'),
+    url(r'^host/get_configurations/$', views.get_configurations, name='get_configurations'),
 ]

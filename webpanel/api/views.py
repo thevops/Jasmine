@@ -124,3 +124,18 @@ def get_module(request, module_id=None):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"status": "module not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST', ])
+def get_configurations(request):
+    """
+    :param request: {"token": ...}
+    :return: module
+    """
+    host = authenticate(request)
+    if not host:
+        return Response({"status": "invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    data = {
+        "synchronization_period": host.synchronization_period
+    }
+    return Response(data, status=status.HTTP_200_OK)

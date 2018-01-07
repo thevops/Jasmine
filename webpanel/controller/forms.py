@@ -149,10 +149,11 @@ class HostTaskAddForm(forms.ModelForm):
                                     label="Module", required=True, empty_label=None)
     workers = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Host.objects.all(),
                                      label="Workers", required=True)
+    enumeration = forms.BooleanField(label="Workers enumeration")
 
     class Meta:
         model = Task
-        fields = ('name', 'description', 'module', 'workers')
+        fields = ('name', 'description', 'module', 'workers', 'enumeration')
 
 class GroupTaskAddForm(forms.ModelForm):
     name = forms.CharField(

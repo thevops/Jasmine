@@ -23,8 +23,10 @@ urlpatterns = [
     url(r'^task/list/all/$', views.task_list_all_view, name='task_list_all'),
     url(r'^task/list/completed/$', views.task_list_completed_view, name='task_list_completed'),
     url(r'^task/list/all/inprogress/$', views.task_list_in_progress_view, name='task_list_in_progress'),
+    url(r'^task/list/all/victorious/$', views.task_list_victorious_view, name='task_list_victorious'),
     url(r'^task/add/host/$', views.task_host_add_view, name='task_host_add'),
     url(r'^task/add/group/$', views.group_host_add_view, name='group_host_add'),
     url(r'^task/delete/(?P<pk>\d+)/$', views.task_delete_view, name='task_delete'),
     url(r'^task/(?P<pk>\d+)/$', views.task_show_view, name='task_show'),
+    url(r'^task/multidelete/$', views.task_multidelete_view, name='task_multidelete'),
 ]

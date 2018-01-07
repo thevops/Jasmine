@@ -109,7 +109,7 @@ def group_edit_view(request, pk=None):
     instance = get_object_or_404(Group, pk=pk)
     edit_form = GroupEditForm(request.POST or None, instance=instance)
     if request.method == "POST" and edit_form.is_valid():
-        hosts = edit_form.cleaned_data['host']
+        hosts = edit_form.cleaned_data['hosts']
         group = edit_form.save()
         Membership.bulk_save_group(hosts_name=hosts, group_obj=group)
         messages.success(request, '%s updated' % edit_form.cleaned_data['name'])
@@ -194,8 +194,8 @@ def task_list_all_view(request):
 
 @login_required
 def task_list_completed_view(request):
-    #complete_status = TaskStatus.objects.get()
-    tasks = Task.objects.all()  # filter
+    complete_status = TaskStatus.objects.get(name="completed")
+    tasks = Task.objects.filter(status=complete_status)
     data = {
         "tasks": tasks,
         "title": "Completed tasks list",
@@ -204,8 +204,18 @@ def task_list_completed_view(request):
 
 @login_required
 def task_list_in_progress_view(request):
-    # complete_status = TaskStatus.objects.get()
-    tasks = Task.objects.all()  # filter
+    inprogress_status = TaskStatus.objects.get(name="in progress")
+    tasks = Task.objects.filter(status=inprogress_status)
+    data = {
+        "tasks": tasks,
+        "title": "In progress tasks list",
+    }
+    return render(request, 'controller/task/list.html', data)
+
+@login_required
+def task_list_victorious_view(request):
+    inprogress_status = TaskStatus.objects.get(name="victorious")
+    tasks = Task.objects.filter(status=inprogress_status)
     data = {
         "tasks": tasks,
         "title": "In progress tasks list",
@@ -222,7 +232,7 @@ def task_host_add_view(request):
             description = host_task_add_form.cleaned_data['description']
             module = host_task_add_form.cleaned_data['module']
             workers = host_task_add_form.cleaned_data['workers']
-            Task.bulk_save(name, description, module, workers)
+            Task.bulk_save(name, description, module, workers, host_task_add_form.cleaned_data['enumeration'])
             messages.success(request, 'Task added to queue.')
             return redirect('controller:task_host_add')
         else:
@@ -266,6 +276,13 @@ def task_delete_view(request, pk=None):
     instance = get_object_or_404(Task, pk=pk)
     instance.delete()
     messages.success(request, 'Task %s has been removed' % instance.name)
+    return redirect('controller:task_list_all')
+
+@login_required
+def task_multidelete_view(request):
+    to_delete = request.POST.getlist('to_delete[]')
+    for i in to_delete:
+        Task.objects.get(pk=i).delete()
     return redirect('controller:task_list_all')
 
 @login_required

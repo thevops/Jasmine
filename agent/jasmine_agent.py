@@ -6,6 +6,7 @@ import json
 import dateutil.parser  # pip install python-dateutil
 import subprocess
 import os
+import time
 
 # -------- SERVER GLOBAL VARIABLES -------
 HTTP = "http://"
@@ -24,7 +25,7 @@ LINUX_DISTRIBUTION = ' '.join(platform.linux_distribution())
 # ----------------------------------------
 # ------------ CONFIGURATION -------------
 CONFIG_FILE = "jasmine.conf"
-COMMUNICATION_INTERVAL = ""
+SYNCHRONIZATION_PERIOD = 0  # seconds
 
 # ----------------------------------------
 
@@ -42,9 +43,9 @@ class Modules:
         if module_name == "Johny the Ripper Cracker":
             return self.johny_the_ripper_cracker()
         elif module_name == "costam":
-            pass
+            return None
         else:
-            pass
+            return None
 
     def johny_the_ripper_cracker(self):
         """
@@ -175,9 +176,7 @@ def set_results(task_id, status, results):
             return None
     except Exception as e:
         print("cant connect to server")
-
-    response = r.json()
-    print(r)
+        return None
 
 def get_task():
     # get all tasks
@@ -190,6 +189,7 @@ def get_task():
             return None
     except Exception as e:
         print("cant connect to server")
+        return None
 
     all_tasks = r.json()
     if len(all_tasks) <= 0:
@@ -208,6 +208,7 @@ def get_task():
             return None
     except Exception as e:
         print("cant connect to server")
+        return None
 
     selected_task = r.json()
 
@@ -223,6 +224,7 @@ def get_module(task):
             return None
     except Exception as e:
         print("cant connect to server")
+        return None
 
     module = r.json()
     if len(module) <= 0:
@@ -231,6 +233,21 @@ def get_module(task):
 
     return module
 
+def get_configurations():
+    global SYNCHRONIZATION_PERIOD
+    url = API_URL + '/host/get_configurations/'
+    data = {"token": TOKEN}
+    try:
+        r = requests.post(url, data=data)
+        if r.status_code != 200:
+            print("server nie dziala?")
+            return None
+    except Exception as e:
+        print("cant connect to server")
+        return None
+
+    tmp = r.json()  # dict
+    SYNCHRONIZATION_PERIOD = tmp['synchronization_period'] * 60  # to seconds
 
 def load_configuration():
     global SERVER_IP, SERVER_PORT, API_URL, TOKEN
@@ -253,10 +270,23 @@ def sigterm_handler(signum, frame):
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, sigterm_handler)
     load_configuration()
+    get_configurations()
+    modules_worker = Modules()
 
-    t = get_task()
-    m = get_module(t)
+    try:
+        while True:
+            print(time.asctime(time.localtime(time.time())))
+            task = get_task()
+            if task:
+                module = get_module(task)
+                if module:
+                    status, results = modules_worker.run(task, module)
+                    set_results(task['id'], status, results)
+                else:
+                    print("Module not found")
 
-    mod = Modules()
-    status, results = mod.run(t,m)
-    q = set_results(t['id'], status, results)
+            time.sleep(SYNCHRONIZATION_PERIOD)
+    except KeyboardInterrupt:
+        print("\nControl+C")
+        exit()
+
