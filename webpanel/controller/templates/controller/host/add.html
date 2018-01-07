@@ -36,18 +36,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            {{ add_host_form.groups.label_tag }}
+                            <div style="overflow: auto; height: 10em;">
+                                {{ add_host_form.groups }}
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-6">
                         {{ add_host_form.description.label_tag }}
                         {{ add_host_form.description }}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-6">
-                        {{ add_host_form.groups.label_tag }}
-                        <div style="overflow: auto; height: 10em;">
-                            {{ add_host_form.groups }}
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">

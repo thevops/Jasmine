@@ -26,7 +26,7 @@
                 <tr class="filters">
                     <th style="width: 5%;vertical-align: middle;"><input type="text" class="form-control" placeholder="#" disabled></th>
                     <th style="vertical-align: middle;"><input type="text" class="form-control" placeholder="Name" disabled></th>
-                    <th style=" vertical-align: middle;"><input type="text" class="form-control" placeholder="Description" disabled></th>
+                    <th style=" vertical-align: middle;"><input type="text" class="form-control" placeholder="Timestamp" disabled></th>
                     <th style=" vertical-align: middle;"><input type="text" class="form-control" placeholder="Module" disabled></th>
                     <th style=" vertical-align: middle;"><input type="text" class="form-control" placeholder="Worker" disabled></th>
                     <th style=" vertical-align: middle;"><input type="text" class="form-control" placeholder="Status" disabled></th>
@@ -40,10 +40,10 @@
                         {{ forloop.counter }}
                    </td>
                     <td style="vertical-align: middle;">
-                        <a href="#">{{ task.name }}</a>
+                        <a href="{% url 'controller:task_show' task.id %}">{{ task.name }}</a>
                     </td>
                     <td style="vertical-align: middle;">
-                        {{ task.description }}
+                        {{ task.timestamp }}
                     </td>
                     <td style="vertical-align: middle;">
                         {{ task.module }}
@@ -55,13 +55,9 @@
                         {{ task.status }}
                     </td>
                     <td style="vertical-align: middle; text-align:center;">
-                        <a href="#">
-                            <span style="font-size: 1.5em;" title="Edit module" class="glyphicon glyphicon-edit"
-                                  aria-hidden="true"></span>
-                        </a>
-                        <a href="#"
-                           onclick="return confirm('Are you sure you want to remove {{ task.name }} ?')">
-                            <span style="font-size: 1.5em;" title="Delete task" class="glyphicon glyphicon-remove"
+                        <a href="{% url 'controller:task_delete' task.id %}"
+                           onclick="return confirm('Are you sure you want to delete {{ task.name }} ?')">
+                            <span style="font-size: 1.5em;" title="Delete task" class="glyphicon glyphicon glyphicon-ok"
                                   aria-hidden="true"></span>
                         </a>
                     </td>

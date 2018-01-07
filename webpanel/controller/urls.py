@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^task/list/all/inprogress/$', views.task_list_in_progress_view, name='task_list_in_progress'),
     url(r'^task/add/host/$', views.task_host_add_view, name='task_host_add'),
     url(r'^task/add/group/$', views.group_host_add_view, name='group_host_add'),
+    url(r'^task/delete/(?P<pk>\d+)/$', views.task_delete_view, name='task_delete'),
+    url(r'^task/(?P<pk>\d+)/$', views.task_show_view, name='task_show'),
 ]

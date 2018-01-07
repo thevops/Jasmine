@@ -1,0 +1,82 @@
+{% extends 'controller/base.html' %}
+
+{% block hosts_list %}
+    <div class="col-md-12">
+        <div class="page-header main">
+            <h1>{{ task.name }} <small>id: {{ task.id }}</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Worker</div>
+                    <div class="panel-body">{{ task.worker }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Status</div>
+                    <div class="panel-body">{{ task.status }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Timestamp</div>
+                    <div class="panel-body">{{ task.timestamp }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">Results</div>
+            <div class="panel-body">{{ task.results | linebreaks }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">Description</div>
+                    <div class="panel-body">{{ task.description | linebreaks }}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">Parameters</div>
+                    <div class="panel-body">{{ task.parameters }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-danger">
+            <div class="panel-heading">Module</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Name</div>
+                            <div class="panel-body">{{ task.module.name }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Description</div>
+                            <div class="panel-body">{{ task.module.description }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Configuration</div>
+                    <div class="panel-body">{{ task.module.configuration }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <a href="javascript:history.back()" class="btn btn-warning btn-block">Back</a>
+            </div>
+            <div class="col-md-3 col-md-offset-6">
+                 <a href="{% url 'controller:task_delete' task.id %}">
+                     <button type="submit" class="btn btn-success btn-block">Delete</button>
+                 </a>
+
+            </div>
+        </div>
+        <br />
+    </div>
+{% endblock %}

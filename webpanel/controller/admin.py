@@ -18,7 +18,7 @@ class TaskStatusAdmin(admin.ModelAdmin):
 @admin.register(Host)
 class HostAdmin(admin.ModelAdmin):
     model = Host
-    list_display = ('id', 'dns_name', 'ip_address', 'description', 'status', 'last_seen', 'synchronization_period')
+    list_display = ('id', 'token', 'dns_name', 'ip_address', 'description', 'status', 'last_seen', 'synchronization_period')
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
@@ -38,8 +38,7 @@ class MembershipAdmin(admin.ModelAdmin):
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     model = Task
-    list_display = ('id', 'name', 'description', 'module', 'worker')
-    list_display_links = ('module', 'worker')
-    list_select_related = ('module', 'worker')
+    list_display = ('id', 'name', 'description', 'module', 'worker', 'results', 'timestamp','parameters')
+    list_display_links = ('id',)
 
 

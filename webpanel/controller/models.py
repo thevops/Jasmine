@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.utils import timezone
+
+import hashlib
 
 class HostStatus(models.Model):
     """ Contains statuses which can be matched to host """
@@ -13,12 +16,18 @@ class HostStatus(models.Model):
 
 class Host(models.Model):
     """ Contains host with all parameters """
+    token = models.CharField(max_length=64, unique=True, db_index=True)
     dns_name = models.CharField(max_length=64, unique=True, db_index=True)
     ip_address = models.GenericIPAddressField(protocol='IPv4', unique=True)
     description = models.TextField()
     status = models.ForeignKey(HostStatus, on_delete=models.CASCADE, null=True)
     last_seen = models.DateTimeField(null=True)
     synchronization_period = models.PositiveSmallIntegerField()
+
+    def save(self, *args, **kwargs):
+        if not self.token:  # run only once - while create
+            self.token = hashlib.md5(self.dns_name.encode() + str(timezone.now()).encode()).hexdigest()
+        super(Host, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "hosts"
@@ -95,6 +104,9 @@ class TaskStatus(models.Model):
     name = models.CharField(max_length=64, unique=True)
     description = models.TextField()
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "task statuses"
         verbose_name = "task status"
@@ -107,17 +119,30 @@ class Task(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, null=False)
     worker = models.ForeignKey(Host, on_delete=models.CASCADE, null=False)
     status = models.ForeignKey(TaskStatus, on_delete=models.CASCADE, null=True)
+    results = models.TextField(null=True, blank=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+    parameters = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
     @staticmethod
-    def bulk_save(name, description, module, workers):
-        status = None  # TaskStatus.objects.get()
-        for w in workers:
+    def bulk_save(name, description, module, workers, enumeration=False):
+        status = TaskStatus.objects.get(name="in queue")
+        for i, w in enumerate(workers):
+            number_of_workers = len(workers)
             worker = Host.objects.filter(dns_name=w)
             if worker:
                 if not name:
                     name = module.name  # if name is empty, module name will be set
                 # worker[0] => [0] becaouse host is queryset with one object
-                Task.objects.create(name=name, description=description, module=module, worker=worker[0], status=status)
+                if enumeration:
+                    params = '{"local_id": %s, "number_of_workers": %s}' % (i, number_of_workers)
+                    Task.objects.create(name=name, description=description, module=module, worker=worker[0],
+                                        status=status, parameters=params)
+                else:
+                    Task.objects.create(name=name, description=description, module=module, worker=worker[0],
+                                        status=status)
         return True
 
     class Meta:

@@ -244,10 +244,10 @@ def group_host_add_view(request):
             name = group_task_add_form.cleaned_data['name']
             description = group_task_add_form.cleaned_data['description']
             module = group_task_add_form.cleaned_data['module']
-            group_name = group_task_add_form.cleaned_data['groups']
+            group_name = group_task_add_form.cleaned_data['group']
             group = Group.objects.filter(name=group_name).first()  # take Group object
             workers = group.members.all()  # find all members of group
-            Task.bulk_save(name, description, module, workers)  # for every member add task
+            Task.bulk_save(name, description, module, workers, group_task_add_form.cleaned_data['enumeration'])  # for every member add task
             messages.success(request, 'Task added to queue.')
             return redirect('controller:group_host_add')
         else:
@@ -259,3 +259,19 @@ def group_host_add_view(request):
             "group_task_add_form": group_task_add_form
         }
         return render(request, 'controller/task/add_for_group.html', data)
+
+@login_required
+def task_delete_view(request, pk=None):
+    """ Get task ID and delete it """
+    instance = get_object_or_404(Task, pk=pk)
+    instance.delete()
+    messages.success(request, 'Task %s has been removed' % instance.name)
+    return redirect('controller:task_list_all')
+
+@login_required
+def task_show_view(request, pk=None):
+    task = get_object_or_404(Task, pk=pk)
+    data = {
+        "task": task
+    }
+    return render(request, 'controller/task/show.html', data)

@@ -14,7 +14,7 @@ class HostAddForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'IP Address'}),
         protocol='IPv4', required=True, label="IP Address")
     description = forms.CharField(widget=forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
+        attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '15', 'style': 'resize:vertical;'}),
                                   required=True, label="Description")
     synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True,
                                                 label="Synchronization period (min)",
@@ -30,13 +30,14 @@ class HostAddForm(forms.ModelForm):
 
 class HostEditForm(forms.ModelForm):
     """ Edit host """
+    token = forms.CharField(disabled=True)
     dns_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'DNS'}),
                                required=True, max_length=64, label="DNS")
     ip_address = forms.GenericIPAddressField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'IP Address'}),
         protocol='IPv4', required=True, label="IP Address")
     description = forms.CharField(widget=forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
+        attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '15', 'style': 'resize:vertical;'}),
                                   required=True, label="Description")
     synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True,
                                                 label="Synchronization period (min)",
@@ -47,7 +48,7 @@ class HostEditForm(forms.ModelForm):
 
     class Meta:
         model = Host
-        fields = ('dns_name', 'ip_address', 'description', 'synchronization_period', 'groups')
+        fields = ('dns_name', 'ip_address', 'description', 'synchronization_period', 'groups', 'token')
 
     def __init__(self, *args, **kwargs):
         """ Filtering Groups selected by Host or not """
@@ -122,7 +123,6 @@ class ModuleAddForm(forms.ModelForm):
     def clean_configuration(self):
         """ Check if configuration field is JSON formatted """
         configuration = self.cleaned_data['configuration']
-        print("CLEAN")
         try:
             loads(configuration)
         except ValueError:
@@ -166,9 +166,10 @@ class GroupTaskAddForm(forms.ModelForm):
     module = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }),
                                     queryset=Module.objects.all(),
                                     label="Module", required=True, empty_label=None)
-    groups = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }), queryset=Group.objects.all(),
-                                     label="Groups", required=True, empty_label=None)
+    group = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }), queryset=Group.objects.all(),
+                                     label="Group", required=True, empty_label=None)
+    enumeration = forms.BooleanField(label="Workers enumeration")
 
     class Meta:
         model = Task
-        fields = ('name', 'description', 'module', 'groups')
+        fields = ('name', 'description', 'module', 'group','enumeration')
