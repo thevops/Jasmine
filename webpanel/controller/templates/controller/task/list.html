@@ -1,5 +1,9 @@
 {% extends 'controller/base.html' %}
 
+{% block meta %}
+    <meta http-equiv="refresh" content="30"/>
+{% endblock %}
+
 {% block hosts_list %}
     <div class="col-md-12">
         <div class="page-header main">
@@ -72,7 +76,7 @@
                                 {{ task.status }}
                             </td>
                             <td style="vertical-align: middle;">
-                                {{ task.results | linebreaksbr }}
+                                {{ task.results | linebreaksbr | truncatewords:"25" }}
                             </td>
                             <td style="vertical-align: middle; text-align:center;">
                                 <a href="{% url 'controller:task_delete' task.id %}" style="text-decoration:none;"

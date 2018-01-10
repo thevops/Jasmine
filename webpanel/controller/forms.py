@@ -149,7 +149,7 @@ class HostTaskAddForm(forms.ModelForm):
                                     label="Module", required=True, empty_label=None)
     workers = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Host.objects.all(),
                                      label="Workers", required=True)
-    enumeration = forms.BooleanField(label="Workers enumeration")
+    enumeration = forms.BooleanField(label="Workers enumeration", required=False)
 
     class Meta:
         model = Task
@@ -169,7 +169,7 @@ class GroupTaskAddForm(forms.ModelForm):
                                     label="Module", required=True, empty_label=None)
     group = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }), queryset=Group.objects.all(),
                                      label="Group", required=True, empty_label=None)
-    enumeration = forms.BooleanField(label="Workers enumeration")
+    enumeration = forms.BooleanField(label="Workers enumeration", required=False)
 
     class Meta:
         model = Task

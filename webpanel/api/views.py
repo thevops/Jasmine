@@ -1,25 +1,27 @@
 from django.shortcuts import render
+from django.utils import timezone
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
 import logging
+import json
 
 from controller.models import Host, Task, TaskStatus, Module
 from .serializers import TaskSerializer, ModuleSerializer
 
-
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.DEBUG)
 # create a file handler
-handler = logging.FileHandler('jasmine-api.log')
+handler = logging.FileHandler('api_views.log')
 handler.setLevel(logging.DEBUG)
 # create a logging format
 formatter = logging.Formatter('%(asctime)s %(name)s.%(funcName)s.%(lineno)d: %(levelname)s %(message)s')
 handler.setFormatter(formatter)
 # add the handlers to the logger
 logger.addHandler(handler)
+
 
 def authenticate(request):
     # check if host with given token exists
@@ -67,6 +69,7 @@ def get_task(request, task_id=None):
         task.status = stat
         task.save()
         serializer = TaskSerializer(task)
+        logger.info("GET %s - %s -> %s" % (task.name, task.worker, task.module))
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"status": "task not exists or you are not owner of it"}, status=status.HTTP_400_BAD_REQUEST)
@@ -92,6 +95,7 @@ def set_task_result(request, task_id=None):
     results = request.POST.get("results")
     if not results:
         return Response({"status": "results not found"}, status=status.HTTP_400_BAD_REQUEST)
+    print(results)
 
     task = Task.objects.filter(id=task_id).first()
     if task and task.worker == host:
@@ -100,6 +104,7 @@ def set_task_result(request, task_id=None):
         task.results = results
         task.save()
         # here we can send notification about completed task TODO
+        logger.info("SET %s - %s -> %s" % (task.name, task.worker, task.module))
         return Response({"status": "ok"}, status=status.HTTP_200_OK)
     else:
         return Response({"status": "task not exists or you are not owner of it"}, status=status.HTTP_400_BAD_REQUEST)
@@ -139,3 +144,17 @@ def get_configurations(request):
         "synchronization_period": host.synchronization_period
     }
     return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['POST', ])
+def periodic_report(request):
+    """
+    :param request: {"token": ...}
+    :return: 
+    """
+    host = authenticate(request)
+    if not host:
+        return Response({"status": "invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    host.last_seen = timezone.now()
+    host.save()
+    return Response(status=status.HTTP_200_OK)

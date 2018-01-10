@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^task/(?P<task_id>[0-9]+)/result/$', views.set_task_result, name='set_task_result'),
     url(r'^module/(?P<module_id>[0-9]+)/$', views.get_module, name='get_module'),
     url(r'^host/get_configurations/$', views.get_configurations, name='get_configurations'),
+    url(r'^host/periodic_report/$', views.periodic_report, name='periodic_report'),
 ]
