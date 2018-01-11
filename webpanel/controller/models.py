@@ -9,6 +9,9 @@ class HostStatus(models.Model):
     name = models.CharField(max_length=64, unique=True)
     description = models.TextField()
 
+    def __str__(self):
+        return str(self.name)
+
     class Meta:
         verbose_name_plural = "host statuses"
         verbose_name = "host status"
@@ -24,6 +27,9 @@ class Host(models.Model):
     last_seen = models.DateTimeField(null=True)
     synchronization_period = models.PositiveSmallIntegerField()
 
+    def __str__(self):
+        return str(self.dns_name)
+
     def save(self, *args, **kwargs):
         if not self.token:  # run only once - while create
             self.token = hashlib.md5(self.dns_name.encode() + str(timezone.now()).encode()).hexdigest()
@@ -32,9 +38,6 @@ class Host(models.Model):
     class Meta:
         verbose_name_plural = "hosts"
         verbose_name = "host"
-
-    def __str__(self):
-        return str(self.dns_name)
 
 class Group(models.Model):
     """ Contains logical group """

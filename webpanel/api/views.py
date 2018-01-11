@@ -8,7 +8,7 @@ from rest_framework import status
 import logging
 import json
 
-from controller.models import Host, Task, TaskStatus, Module
+from controller.models import Host, Task, TaskStatus, Module, HostStatus
 from .serializers import TaskSerializer, ModuleSerializer
 
 logger = logging.getLogger(__file__)
@@ -155,6 +155,8 @@ def periodic_report(request):
     if not host:
         return Response({"status": "invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    host_stat = HostStatus.objects.get(name="Active")
     host.last_seen = timezone.now()
+    host.status = host_stat
     host.save()
     return Response(status=status.HTTP_200_OK)
