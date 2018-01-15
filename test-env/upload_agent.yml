@@ -1,0 +1,18 @@
+---
+- hosts: docker
+  remote_user: root
+  gather_facts: true
+  tasks:
+  - copy:
+      src: /opt/jasmine-root/Jasmine/agent/jasmine-agent.conf
+      dest: /opt/jasmine-agent/
+      owner: root
+      group: root
+      mode: 0750
+  - copy:
+      src: /opt/jasmine-root/Jasmine/agent/jasmine-agent.py
+      dest: /opt/jasmine-agent/
+      owner: root
+      group: root
+      mode: 0750
+---

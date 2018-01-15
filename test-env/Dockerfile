@@ -1,6 +1,5 @@
 FROM ubuntu:16.04
 MAINTAINER Krzysztof Łuczak
-# for launch container: docker run -d -P --name NAZWA obraz:tag
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -25,6 +24,8 @@ RUN apt-get install -y lshw
 # install John the Ripper
 RUN apt-get install -y john
 
+# dicrectory for aget
+RUN mkdir -p /opt/jasmine-agent/
 # --------------------------------------------------
 
 # install SSH server
@@ -39,5 +40,5 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
-EXPOSE 22
+#EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
