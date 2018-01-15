@@ -3,20 +3,18 @@ import platform
 import signal
 import requests
 import json
-import dateutil.parser  # pip install python-dateutil
 import subprocess
 import os
 import sys
 import time
 import logging
 import threading
-
 import traceback
 
 # ---------   LOGGING SETTINGS -------------
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('jasmine_agent.log')
+handler = logging.FileHandler('jasmine-agent.log')
 handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s %(name)s.%(funcName)s.%(lineno)d: %(levelname)s %(message)s')
 handler.setFormatter(formatter)
@@ -39,7 +37,7 @@ LINUX_DISTRIBUTION = ' '.join(platform.linux_distribution())
 
 # ----------------------------------------
 # ------------ CONFIGURATION -------------
-CONFIG_FILE = "jasmine.conf"
+CONFIG_FILE = "jasmine-agent.conf"
 SYNCHRONIZATION_PERIOD = 0  # seconds
 
 # ----------------------------------------
@@ -86,7 +84,7 @@ class GetInformationAboutSystem:
         return {"disk_size": stdout}
 
     def get_disk_model(self):
-        command = ["sudo lshw -short -C disk -quiet | grep 'disk' | tr -s ' ' | cut -d' ' -f2-"]
+        command = ["lshw -short -C disk -quiet | grep 'disk' | tr -s ' ' | cut -d' ' -f2-"]
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'

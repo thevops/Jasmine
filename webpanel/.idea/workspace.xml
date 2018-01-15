@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="704f5de9-f5c9-434e-84f9-0d75d9d64936" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/api/passive_modules.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../agent/jasmine_agent.log" afterPath="$PROJECT_DIR$/../agent/jasmine_agent.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/urls.py" afterPath="$PROJECT_DIR$/api/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/views.py" afterPath="$PROJECT_DIR$/api/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/models.py" afterPath="$PROJECT_DIR$/controller/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/templates/controller/host/list.html" afterPath="$PROJECT_DIR$/controller/templates/controller/host/list.html" />
-    </list>
+    <list default="true" id="704f5de9-f5c9-434e-84f9-0d75d9d64936" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
