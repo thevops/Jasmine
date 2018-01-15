@@ -381,8 +381,7 @@ def load_configuration():
     try:
         data = json.load(open(CONFIG_FILE))
     except Exception as e:
-        print(e)
-        exit()
+        return
 
     SERVER_IP = data['server ip']
     SERVER_PORT = data['server port']
@@ -391,14 +390,19 @@ def load_configuration():
 
 def sigterm_handler(signum, frame):
     # for systemd stop
-    raise Exception
+    stop_event.set()
+    exit()
 
 
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, sigterm_handler)
-    load_configuration()
-    modules_worker = Modules()
-    modules_worker.get_configurations()
+    try:
+        load_configuration()
+        modules_worker = Modules()
+        modules_worker.get_configurations()
+    except Exception as e:
+        logger.critical("Server not responding from: %s:%s" % (SERVER_IP, SERVER_PORT))
+        exit()
 
     # run periodic report
     stop_event = threading.Event()
@@ -424,7 +428,7 @@ if __name__ == "__main__":
     except ServerError:
         logger.critical("ServerError - exit")
     except Exception as e:
-        print(e)
+        #print(e)
         traceback.print_exc()
     finally:
         stop_event.set()

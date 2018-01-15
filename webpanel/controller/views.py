@@ -292,3 +292,11 @@ def task_show_view(request, pk=None):
         "task": task
     }
     return render(request, 'controller/task/show.html', data)
+
+@login_required
+def task_restart_view(request, pk=None):
+    task = get_object_or_404(Task, pk=pk)
+    stat = TaskStatus.objects.get(name="in queue")
+    task.status = stat
+    task.save()
+    return redirect('controller:task_list_all')

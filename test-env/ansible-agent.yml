@@ -1,0 +1,33 @@
+---
+- hosts: docker
+  remote_user: root
+  gather_facts: true
+  tasks:
+  - copy:
+      src: /opt/jasmine-root/Jasmine/test-env/restart-agent.sh
+      dest: /opt/jasmine-agent/
+      owner: root
+      group: root
+      mode: 0744
+    tags:
+      -  upload
+  - copy:
+      src: /opt/jasmine-root/Jasmine/agent/jasmine-agent.conf
+      dest: /opt/jasmine-agent/
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      -  upload
+  - copy:
+      src: /opt/jasmine-root/Jasmine/agent/jasmine-agent.py
+      dest: /opt/jasmine-agent/
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      -  upload
+  - script: /opt/jasmine-root/Jasmine/test-env/restart-agent.sh
+    tags:
+      -  restart
+...

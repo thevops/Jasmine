@@ -1,0 +1,11 @@
+[Unit]
+Description=Jasmine-agent
+After=multi-user.target
+
+[Service]
+Type=idle
+WorkingDirectory=/opt/jasmine-agent/
+ExecStart=/usr/bin/python3 /opt/jasmine-agent/jasmine-agent.py
+
+[Install]
+WantedBy=multi-user.target

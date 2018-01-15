@@ -6,12 +6,15 @@ ARG DEBIAN_FRONTEND=noninteractive
 # install apt-utils
 RUN apt-get update && apt-get install -y apt-utils
 
+# install python2.7 for ansible
+RUN apt-get install -y python
+
 # locale
 RUN apt-get install -y locales
 RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8
+ENV LANG pl_PL.UTF-8
+ENV LANGUAGE pl_PL:pl
+ENV LC_ALL pl_PL.UTF-8
 
 # INSTALL APPS FOR MODULES ------------------------
 

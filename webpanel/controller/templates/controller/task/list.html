@@ -51,7 +51,7 @@
                         <th style="width: 20%; vertical-align: middle;"><input type="text" class="form-control"
                                                                                placeholder="Results"
                                                                                disabled></th>
-                        <th style="width: 6%; vertical-align: middle; text-align:center;">Action</th>
+                        <th style="width: 8%; vertical-align: middle; text-align:center;">Action</th>
                     </tr>
                     </thead>
                     {% for task in tasks %}
@@ -79,6 +79,10 @@
                                 {{ task.results | linebreaksbr | truncatewords:"25" }}
                             </td>
                             <td style="vertical-align: middle; text-align:center;">
+                                <a href="{% url 'controller:task_restart' task.id %}" style="text-decoration:none;">
+                            <span style="font-size: 1.5em;" title="Restart task" class="glyphicon glyphicon-refresh"
+                                  aria-hidden="true"></span>
+                                </a>
                                 <a href="{% url 'controller:task_delete' task.id %}" style="text-decoration:none;"
                                    onclick="return confirm('Are you sure you want to delete {{ task.name }} ?')">
                             <span style="font-size: 1.5em;" title="Delete task" class="glyphicon glyphicon glyphicon-ok"
