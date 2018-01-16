@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.utils.safestring import mark_safe
 # thrid-part module
 # this app
-from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm, HostTaskAddForm, GroupTaskAddForm
 from .models import Host, Group, Membership, Module, Task, HostStatus, TaskStatus
+from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm, HostTaskAddForm, GroupTaskAddForm
 
 @login_required
 def start_view(request):
