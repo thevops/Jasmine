@@ -1,6 +1,0 @@
-2018-01-10 00:42:13,319 jasmine_agent.py.<module>.437: CRITICAL ServerError - exit
-2018-01-10 00:52:08,239 jasmine_agent.py.set_results.334: CRITICAL request status_code 500
-2018-01-10 00:52:08,239 jasmine_agent.py.<module>.437: CRITICAL ServerError - exit
-2018-01-10 00:53:42,424 jasmine_agent.py.set_results.331: CRITICAL request status_code 500
-2018-01-10 00:53:42,424 jasmine_agent.py.<module>.434: CRITICAL ServerError - exit
-2018-01-11 21:40:17,870 jasmine_agent.py.<module>.427: CRITICAL ServerError - exit
