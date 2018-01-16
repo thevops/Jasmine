@@ -24,6 +24,8 @@
                         {{ group_task_add_form.name }}
                         {{ group_task_add_form.description.label_tag }}
                         {{ group_task_add_form.description }}
+                        {{ group_task_add_form.parameters.label_tag }}
+                        {{ group_task_add_form.parameters }}
                     </div>
                     <div class="col-md-6">
                         {{ group_task_add_form.module.label_tag }}
@@ -43,4 +45,9 @@
             </form>
         </div>
     </div>
+<script>
+    function toggleDisabled(_checked) {
+        document.getElementById('{{ group_task_add_form.parameters.auto_id }}').disabled = _checked ? true : false;
+    }
+</script>
 {% endblock %}

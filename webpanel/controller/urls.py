@@ -30,4 +30,6 @@ urlpatterns = [
     url(r'^task/(?P<pk>\d+)/$', views.task_show_view, name='task_show'),
     url(r'^task/multidelete/$', views.task_multidelete_view, name='task_multidelete'),
     url(r'^task/restart/(?P<pk>\d+)/$', views.task_restart_view, name='task_restart'),
+    # --- TERMINAL --- #
+    url(r'^open_terminal/$', views.open_terminal, name='open_terminal'),
 ]

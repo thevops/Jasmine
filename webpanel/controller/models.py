@@ -130,7 +130,7 @@ class Task(models.Model):
         return self.name
 
     @staticmethod
-    def bulk_save(name, description, module, workers, enumeration=False):
+    def bulk_save(name, description, module, workers, parameters, enumeration=False):
         status = TaskStatus.objects.get(name="in queue")
         for i, w in enumerate(workers):
             number_of_workers = len(workers)
@@ -145,7 +145,7 @@ class Task(models.Model):
                                         status=status, parameters=params)
                 else:
                     Task.objects.create(name=name, description=description, module=module, worker=worker[0],
-                                        status=status)
+                                        status=status, parameters=parameters)
         return True
 
     class Meta:

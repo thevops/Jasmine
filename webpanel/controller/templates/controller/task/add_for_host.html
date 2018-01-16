@@ -26,7 +26,8 @@
                         {{ host_task_add_form.description }}
                         {{ host_task_add_form.module.label_tag }}
                         {{ host_task_add_form.module }}
-                        <br/>
+                        {{ host_task_add_form.parameters.label_tag }}
+                        {{ host_task_add_form.parameters }}
                         {{ host_task_add_form.enumeration.label_tag }}
                         {{ host_task_add_form.enumeration }}
                     </div>
@@ -45,4 +46,10 @@
             </form>
         </div>
     </div>
+<script>
+    function toggleDisabled(_checked) {
+        document.getElementById('{{ host_task_add_form.parameters.auto_id }}').disabled = _checked ? true : false;
+    }
+</script>
+
 {% endblock %}

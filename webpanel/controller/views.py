@@ -232,7 +232,9 @@ def task_host_add_view(request):
             description = host_task_add_form.cleaned_data['description']
             module = host_task_add_form.cleaned_data['module']
             workers = host_task_add_form.cleaned_data['workers']
-            Task.bulk_save(name, description, module, workers, host_task_add_form.cleaned_data['enumeration'])
+            parameters = host_task_add_form.cleaned_data['parameters']
+            Task.bulk_save(name, description, module, workers, parameters,
+                           host_task_add_form.cleaned_data['enumeration'])
             messages.success(request, 'Task added to queue.')
             return redirect('controller:task_host_add')
         else:
@@ -257,7 +259,9 @@ def group_host_add_view(request):
             group_name = group_task_add_form.cleaned_data['group']
             group = Group.objects.filter(name=group_name).first()  # take Group object
             workers = group.members.all()  # find all members of group
-            Task.bulk_save(name, description, module, workers, group_task_add_form.cleaned_data['enumeration'])  # for every member add task
+            parameters = group_task_add_form.cleaned_data['parameters']
+            Task.bulk_save(name, description, module, workers, parameters,
+                           group_task_add_form.cleaned_data['enumeration'])  # for every member add task
             messages.success(request, 'Task added to queue.')
             return redirect('controller:group_host_add')
         else:
@@ -300,3 +304,10 @@ def task_restart_view(request, pk=None):
     task.status = stat
     task.save()
     return redirect('controller:task_list_all')
+
+# ----------------------------------------------------------------------------------
+
+@login_required
+def open_terminal(request):
+    terminal_addr = "https://" + request.META.get('HTTP_HOST').split(":")[0] + ":57575"
+    return redirect(terminal_addr)

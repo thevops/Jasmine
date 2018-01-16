@@ -15,7 +15,7 @@ class HostAddForm(forms.ModelForm):
         protocol='IPv4', required=True, label="IP Address")
     description = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '15', 'style': 'resize:vertical;'}),
-                                  required=True, label="Description")
+        required=True, label="Description")
     synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True,
                                                 label="Synchronization period (min)",
                                                 widget=forms.NumberInput(
@@ -38,7 +38,7 @@ class HostEditForm(forms.ModelForm):
         protocol='IPv4', required=True, label="IP Address")
     description = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '15', 'style': 'resize:vertical;'}),
-                                  required=True, label="Description")
+        required=True, label="Description")
     synchronization_period = forms.IntegerField(min_value=1, max_value=60, required=True,
                                                 label="Synchronization period (min)",
                                                 widget=forms.NumberInput(
@@ -60,7 +60,7 @@ class HostEditForm(forms.ModelForm):
             not_selected = Group.objects.exclude(pk__in=selected_id)
             qs = selected | not_selected  # for concatenate two querysets
             self.fields['groups'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
-                                                                  queryset=qs, label="Groups", required=False)
+                                                                   queryset=qs, label="Groups", required=False)
             self.initial['groups'] = selected_id  # set which Groups will be 'checked'
 
 
@@ -70,7 +70,7 @@ class GroupAddForm(forms.ModelForm):
                            required=True, max_length=64, label="Name of group")
     description = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
-                                  required=True, label="Description")
+        required=True, label="Description")
 
     hosts = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
                                            queryset=Host.objects.all(), label="Hosts", required=False)
@@ -86,7 +86,7 @@ class GroupEditForm(forms.ModelForm):
                            required=True, max_length=64, label="Name of group")
     description = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
-                                  required=True, label="Description")
+        required=True, label="Description")
 
     hosts = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
                                            queryset=Host.objects.all(), label="Hosts", required=False)
@@ -105,7 +105,7 @@ class GroupEditForm(forms.ModelForm):
             not_selected = Host.objects.exclude(pk__in=selected_id)
             qs = selected | not_selected  # for concatenate two querysets
             self.fields['hosts'] = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
-                                                                 queryset=qs, label="Hosts", required=False)
+                                                                  queryset=qs, label="Hosts", required=False)
             self.initial['hosts'] = selected_id  # set which Groups will be 'checked'
 
 
@@ -115,10 +115,10 @@ class ModuleAddForm(forms.ModelForm):
                            required=True, max_length=64, label="Name")
     description = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
-                                  required=True, label="Description")
+        required=True, label="Description")
     configuration = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Configuration', 'rows': '5', 'style': 'resize:vertical;'}),
-                                    required=True, label="Configuration")
+        required=True, label="Configuration")
 
     def clean_configuration(self):
         """ Check if configuration field is JSON formatted """
@@ -142,18 +142,24 @@ class HostTaskAddForm(forms.ModelForm):
         required=False, max_length=64, label="Name")
     description = forms.CharField(
         widget=forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
+            attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '3', 'style': 'resize:vertical;'}),
         required=False, label="Description")
     module = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }),
                                     queryset=Module.objects.all(),
                                     label="Module", required=True, empty_label=None)
     workers = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Host.objects.all(),
-                                     label="Workers", required=True)
-    enumeration = forms.BooleanField(label="Workers enumeration", required=False)
+                                             label="Workers", required=True)
+    enumeration = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onchange': 'toggleDisabled(this.checked)'}),
+                                     label="Workers enumeration", required=False)
+    parameters = forms.CharField(
+        widget=forms.Textarea(
+            attrs={'class': 'form-control', 'placeholder': 'Parameters', 'rows': '3', 'style': 'resize:vertical;'}),
+        required=False, label="Parameters")
 
     class Meta:
         model = Task
-        fields = ('name', 'description', 'module', 'workers', 'enumeration')
+        fields = ('name', 'description', 'module', 'workers', 'enumeration','parameters')
+
 
 class GroupTaskAddForm(forms.ModelForm):
     name = forms.CharField(
@@ -162,15 +168,20 @@ class GroupTaskAddForm(forms.ModelForm):
         required=False, max_length=64, label="Name")
     description = forms.CharField(
         widget=forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '5', 'style': 'resize:vertical;'}),
+            attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': '3', 'style': 'resize:vertical;'}),
         required=False, label="Description")
     module = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }),
                                     queryset=Module.objects.all(),
                                     label="Module", required=True, empty_label=None)
     group = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control', }), queryset=Group.objects.all(),
-                                     label="Group", required=True, empty_label=None)
-    enumeration = forms.BooleanField(label="Workers enumeration", required=False)
+                                   label="Group", required=True, empty_label=None)
+    enumeration = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onchange': 'toggleDisabled(this.checked)'}),
+                                                                label="Workers enumeration", required=False)
+    parameters = forms.CharField(
+        widget=forms.Textarea(
+            attrs={'class': 'form-control', 'placeholder': 'Parameters', 'rows': '3', 'style': 'resize:vertical;'}),
+        required=False, label="Parameters")
 
     class Meta:
         model = Task
-        fields = ('name', 'description', 'module', 'group','enumeration')
+        fields = ('name', 'description', 'module', 'group', 'enumeration', 'parameters')
