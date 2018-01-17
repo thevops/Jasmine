@@ -69,13 +69,11 @@ class GetInformationAboutSystem:
         stdout = proc.stdout.read().decode('utf-8').split("\n")[0].split()
         return {"uptime": ' '.join(stdout)}
 
-
     def get_ifconfig(self):
         proc = subprocess.Popen(['ifconfig -a'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'
         return {"ifconfig": stdout}
-
 
     def get_disk_size(self):
         proc = subprocess.Popen(['df', '-h'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
@@ -90,14 +88,13 @@ class GetInformationAboutSystem:
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'
         return {"disk_model": stdout}
 
-
     def get_meminfo(self):
         command = ["cat /proc/meminfo | grep 'Mem' | tr -s ' '"]
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8').split("\n")  # [:-2] remove last newline = '\n'
-        
-        result = {}
+
+        result = dict()
         # divide to MB
         result["MemTotal"] = round(int(stdout[0].split()[1])/1024,2)
         result["MemFree"] = round(int(stdout[1].split()[1])/1024,2)
@@ -105,14 +102,12 @@ class GetInformationAboutSystem:
 
         return {"ram": result}
 
-
     def get_cpu_info(self):
         proc = subprocess.Popen(["cat /proc/cpuinfo"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read().decode('utf-8').split("\n")
 
         result = dict()
-
         # ---- CPU model ----
         processor_model = set()
         # ---- CPU cores number ----
@@ -120,7 +115,6 @@ class GetInformationAboutSystem:
         # ---- CPU processors
         processors_number = 0
         tmp_processors_number = set()
-
 
         for line in stdout:
             if 'model name' in line:
@@ -138,7 +132,7 @@ class GetInformationAboutSystem:
         processors_number = len(tmp_processors_number)
 
         result = {"model": list(processor_model), "cores": cores_number, "processors": processors_number}
-            
+
         return {"cpu": result}
 
     def get_uname(self):
@@ -151,16 +145,14 @@ class GetInformationAboutSystem:
         data = {}
         for arg in args:
             data.update(arg)
-            #print(arg)
 
-        #print(data)
         data_tmp = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
-        json_result = json.loads(data_tmp)
         return data_tmp
 
 class Modules:
     def __init__(self):
-        pass
+        self.task = None
+        self.module = None
 
     def run(self, task, module):
         self.task = task
@@ -175,6 +167,10 @@ class Modules:
             return self.get_configurations()
         elif module_name == "Full report":
             return self.full_report()
+        elif module_name == "Autoupdate":
+            return self.autoupdate()
+        elif module_name == "Run command":
+            return self.run_command()
         else:
             status = "failed"
             results = "module not found"
@@ -214,7 +210,7 @@ class Modules:
         except Exception as e:
             logger.critical("Error in json loads")
             return None
-        
+
         # count number of file lines
         num_of_lines = sum(1 for line in open(dict_filename, errors='replace'))
 
@@ -286,12 +282,43 @@ class Modules:
         cpu_info = GetInfo.get_cpu_info()
         uname = GetInfo.get_uname()
 
-        results = GetInfo.create_report(top_proc_cpu, top_proc_mem, uptime, ifconfig, disk_size, disk_model, 
+        results = GetInfo.create_report(top_proc_cpu, top_proc_mem, uptime, ifconfig, disk_size, disk_model,
             mem_info, cpu_info, uname, {"hostname": HOSTNAME}, {"python_version": PYTHON_VERSION},
             {"python_compiler": PYTHON_COMPILER}, {"linux_distribution": LINUX_DISTRIBUTION})
 
         status = "completed"
         return status, results
+
+    def autoupdate(self):
+        """
+        module.configurations
+        {
+            "agent_url": "",
+        }
+        """
+        configuration = json.loads(self.module['configuration'])
+        agent_url = configuration['agent_url']
+        command = ['bash autoupdate.sh %s' % agent_url]
+        proc = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+        resutls = "ok"
+        status = "completed"
+        return status, results
+
+    def run_command(self):
+        """
+        module.configurations
+        {
+            "command": "",
+        }
+        """
+        configuration = json.loads(self.module['configuration'])
+        command = [configuration['command']]
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        proc.wait()
+        resutls = proc.stdout.read()[:-1].decode('utf-8')  # [:-2] remove last newline = '\n'
+        status = "completed"
+        return status, results
+
 
 # ----------------------   PERIODIC REPORT    -----------------------------
 def periodic_report(stop_event):
@@ -343,7 +370,7 @@ def get_task():
 
     # sort task by timestamp
     sorted_tasks = sorted(all_tasks, key=lambda x: x['timestamp'])
-    
+
     # get first task
     url = API_URL + '/task/' + str(sorted_tasks[0]['id']) + '/'
     try:
