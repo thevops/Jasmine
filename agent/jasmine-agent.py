@@ -60,33 +60,33 @@ class GetInformationAboutSystem:
         result = {} # dict for results
         for i, row in enumerate(stdout):
             row = row.split() # split row by spaces
-            result[i] = {"pid": row[0], "user": row[1], "mem": row[2], "cpu": row[3], "etime": row[4], "cmd": row[5]}
-        return {"top_10_" + option: result}
+            result[i] = {'pid': row[0], 'user': row[1], 'mem': row[2], 'cpu': row[3], 'etime': row[4], 'cmd': row[5]}
+        return {'top_10_' + option: result}
 
     def get_uptime(self):
         proc = subprocess.Popen(['uptime | tr -s " "'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read().decode('utf-8').split("\n")[0].split()
-        return {"uptime": ' '.join(stdout)}
+        return {'uptime': ' '.join(stdout)}
 
     def get_ifconfig(self):
         proc = subprocess.Popen(['ifconfig -a'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'
-        return {"ifconfig": stdout}
+        return {'ifconfig': stdout}
 
     def get_disk_size(self):
         proc = subprocess.Popen(['df', '-h'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'
-        return {"disk_size": stdout}
+        return {'disk_size': stdout}
 
     def get_disk_model(self):
         command = ["lshw -short -C disk -quiet | grep 'disk' | tr -s ' ' | cut -d' ' -f2-"]
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
         stdout = proc.stdout.read()[:-2].decode('utf-8')  # [:-2] remove last newline = '\n'
-        return {"disk_model": stdout}
+        return {'disk_model': stdout}
 
     def get_meminfo(self):
         command = ["cat /proc/meminfo | grep 'Mem' | tr -s ' '"]
@@ -96,11 +96,11 @@ class GetInformationAboutSystem:
 
         result = dict()
         # divide to MB
-        result["MemTotal"] = round(int(stdout[0].split()[1])/1024,2)
-        result["MemFree"] = round(int(stdout[1].split()[1])/1024,2)
-        result["MemAvailable"] = round(int(stdout[2].split()[1])/1024,2)
+        result['MemTotal'] = round(int(stdout[0].split()[1])/1024,2)
+        result['MemFree'] = round(int(stdout[1].split()[1])/1024,2)
+        result['MemAvailable'] = round(int(stdout[2].split()[1])/1024,2)
 
-        return {"ram": result}
+        return {'ram': result}
 
     def get_cpu_info(self):
         proc = subprocess.Popen(["cat /proc/cpuinfo"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -131,9 +131,9 @@ class GetInformationAboutSystem:
 
         processors_number = len(tmp_processors_number)
 
-        result = {"model": list(processor_model), "cores": cores_number, "processors": processors_number}
+        result = {'model': list(processor_model), 'cores': cores_number, 'processors': processors_number}
 
-        return {"cpu": result}
+        return {'cpu': result}
 
     def get_uname(self):
         proc = subprocess.Popen(['uname -a'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -146,7 +146,7 @@ class GetInformationAboutSystem:
         for arg in args:
             data.update(arg)
 
-        data_tmp = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
+        data_tmp = json.dumps(data, ensure_ascii=False)
         return data_tmp
 
 class Modules:
@@ -283,8 +283,8 @@ class Modules:
         uname = GetInfo.get_uname()
 
         results = GetInfo.create_report(top_proc_cpu, top_proc_mem, uptime, ifconfig, disk_size, disk_model,
-            mem_info, cpu_info, uname, {"hostname": HOSTNAME}, {"python_version": PYTHON_VERSION},
-            {"python_compiler": PYTHON_COMPILER}, {"linux_distribution": LINUX_DISTRIBUTION})
+            mem_info, cpu_info, uname, {'hostname': HOSTNAME}, {'python_version': PYTHON_VERSION},
+            {'python_compiler': PYTHON_COMPILER}, {'linux_distribution': LINUX_DISTRIBUTION})
 
         status = "completed"
         return status, results
@@ -300,22 +300,19 @@ class Modules:
         agent_url = configuration['agent_url']
         command = ['bash autoupdate.sh %s' % agent_url]
         proc = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
-        resutls = "ok"
+        results = "ok"
         status = "completed"
         return status, results
 
     def run_command(self):
         """
-        module.configurations
-        {
-            "command": "",
-        }
+        task.parameters = string
         """
-        configuration = json.loads(self.module['configuration'])
-        command = [configuration['command']]
+        configuration = self.task['parameters']
+        command = [configuration]
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         proc.wait()
-        resutls = proc.stdout.read()[:-1].decode('utf-8')  # [:-2] remove last newline = '\n'
+        results = proc.stdout.read()[:-1].decode('utf-8')  # [:-2] remove last newline = '\n'
         status = "completed"
         return status, results
 
@@ -439,7 +436,7 @@ if __name__ == "__main__":
     # -----------------    MAIN LOOP    -----------------------
     try:
         while True:
-            print(" ", time.asctime(time.localtime(time.time())))
+            #print(" ", time.asctime(time.localtime(time.time())))
             task = get_task()
             if task:
                 module = get_module(task)
@@ -449,16 +446,16 @@ if __name__ == "__main__":
 
             for i in range(1, SYNCHRONIZATION_PERIOD):
                 time.sleep(1)
-                sys.stdout.write("\r%s z %s" % (i, SYNCHRONIZATION_PERIOD))
+                #sys.stdout.write("\r%s z %s" % (i, SYNCHRONIZATION_PERIOD))
     except KeyboardInterrupt:
-        print("\nControl+C")
+        pass
+        #print("\nControl+C")
     except ServerError:
         logger.critical("ServerError - exit")
     except Exception as e:
+        pass
         #print(e)
-        traceback.print_exc()
+        #traceback.print_exc()
     finally:
         stop_event.set()
         exit()
-
-

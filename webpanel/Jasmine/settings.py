@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['127.0.0.1','195.181.212.93']
 # Application definition
 
 INSTALLED_APPS = [
+    'chartkick',
+    'prettyjson',
     'rest_framework',
     'api.apps.ApiConfig',
     'controller.apps.ControllerConfig',
@@ -132,9 +134,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+import chartkick
 STATIC_URL = '/files/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "files"),
+    chartkick.js(),
 ]
 LOGIN_URL = '/accounts/'
 

@@ -50,10 +50,6 @@
                         <li><a href="#">cośtam</a></li>
                     </ul>
                 </li>-->
-                <li>
-                    <a class="dropdown-toggle" target="_blank"
-                       href="{% url 'controller:open_terminal' %}" id="themes">Terminal</a>
-                </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Tasks <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -79,11 +75,12 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Settings <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Configuration</a></li>
+                        <li><a class="dropdown-toggle" target="_blank" href="{% url 'controller:open_terminal' %}" id="themes">Terminal</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'accounts:logout_view' %}">Logout</a></li>
                     </ul>
                 </li>
+                <li><a style="pointer-events: none;" href="#">{{ request.user }}</a></li>
             </ul>
         </div>
     </div>

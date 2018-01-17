@@ -95,7 +95,6 @@ def set_task_result(request, task_id=None):
     results = request.POST.get("results")
     if not results:
         return Response({"status": "results not found"}, status=status.HTTP_400_BAD_REQUEST)
-    print(results)
 
     task = Task.objects.filter(id=task_id).first()
     if task and task.worker == host:

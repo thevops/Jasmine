@@ -19,4 +19,4 @@ def refresh_hosts_status(request):
         elif (now - timedelta(minutes=h.synchronization_period)) > h.last_seen:
             h.status = lost_status
             h.save()
-        return Response({"status": "ok"}, status=status.HTTP_200_OK)
+    return Response({"status": "ok"}, status=status.HTTP_200_OK)

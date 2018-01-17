@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^task/add/group/$', views.group_host_add_view, name='group_host_add'),
     url(r'^task/delete/(?P<pk>\d+)/$', views.task_delete_view, name='task_delete'),
     url(r'^task/(?P<pk>\d+)/$', views.task_show_view, name='task_show'),
+    url(r'^task/(?P<pk>\d+)/results/$', views.task_results_show_view, name='task_results_show'),
     url(r'^task/multidelete/$', views.task_multidelete_view, name='task_multidelete'),
     url(r'^task/restart/(?P<pk>\d+)/$', views.task_restart_view, name='task_restart'),
     # --- TERMINAL --- #

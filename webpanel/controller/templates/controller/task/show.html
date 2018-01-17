@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="panel panel-success">
-            <div class="panel-heading">Results</div>
+            <div class="panel-heading">Results <small><a style="color: white;" href="{% url 'controller:task_results_show' task.id %}">(open in new tab)</a></small></div>
             <div class="panel-body">{{ task.results | linebreaksbr }}</div>
         </div>
         <div class="row">

@@ -1,9 +1,17 @@
 {% extends 'controller/base.html' %}
 
 {% block index %}
+{% load chartkick %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="files/chartkick.js"></script>
     <div class="col-md-12">
         <div class="page-header main">
-            <h1>Siemka {{ request.user }}</h1>
+            <h1>Monitoring</h1>
+        </div>
+        <div>
+        	{% column_chart task_numbers with library={ "title":{"text":"Tasks"}, "yAxis":{"title":{"text":"Number"}} } %}
+
+        	{% column_chart host_numbers with library={ "title":{"text":"Host activity"}, "yAxis":{"title":{"text":"Number"}} } %}
         </div>
     </div>
 {% endblock %}

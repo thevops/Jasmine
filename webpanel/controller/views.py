@@ -4,14 +4,49 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.http import HttpResponse
 # thrid-part module
+import json
 # this app
 from .models import Host, Group, Membership, Module, Task, HostStatus, TaskStatus
 from .forms import HostAddForm, HostEditForm,  GroupAddForm, GroupEditForm, ModuleAddForm, HostTaskAddForm, GroupTaskAddForm
 
 @login_required
 def start_view(request):
-    return render(request, 'controller/index.html',)
+    # host
+    active_status = HostStatus.objects.get(name="Active")
+    lost_status = HostStatus.objects.get(name="Lost")
+    alive_hosts_number = Host.objects.filter(status=active_status).count()
+    lost_hosts_number = Host.objects.filter(status=lost_status).count()
+
+    host_numbers = [["Active", alive_hosts_number], ["Lost", lost_hosts_number]]
+
+    # task
+    in_queue_status = TaskStatus.objects.get(name="in queue")
+    in_progress_status = TaskStatus.objects.get(name="in progress")
+    completed_status = TaskStatus.objects.get(name="completed")
+    failed_status = TaskStatus.objects.get(name="failed")
+    victorious_status = TaskStatus.objects.get(name="victorious")
+
+    in_queue_tasks = Task.objects.filter(status=in_queue_status).count()
+    in_progress_tasks = Task.objects.filter(status=in_progress_status).count()
+    completed_tasks = Task.objects.filter(status=completed_status).count()
+    failed_tasks = Task.objects.filter(status=failed_status).count()
+    victorious_tasks = Task.objects.filter(status=victorious_status).count()
+
+    task_numbers = [["in queue",in_queue_tasks],
+                    ["in progress", in_progress_tasks],
+                    ["completed", completed_tasks],
+                    ["failed", failed_tasks],
+                    ["victorious", victorious_tasks]
+    ]
+
+
+    data = {
+        "host_numbers": host_numbers,
+        "task_numbers": task_numbers
+    }
+    return render(request, 'controller/index.html', data)
 
 # --------------------------------------------------- HOSTS ------------------  #
 
@@ -296,6 +331,15 @@ def task_show_view(request, pk=None):
         "task": task
     }
     return render(request, 'controller/task/show.html', data)
+
+@login_required
+def task_results_show_view(request, pk=None):
+    task = get_object_or_404(Task, pk=pk)
+    output = json.loads(task.results)
+    data = {
+        "results": output
+    }
+    return render(request, 'controller/task/show_results.html', data)
 
 @login_required
 def task_restart_view(request, pk=None):
